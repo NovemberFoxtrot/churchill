@@ -1,0 +1,21 @@
+<form class="form-inline" action="/add" method="post">
+  <input name="website" type="text" class="input-small" placeholder="Website">
+  <button type="submit" class="btn">Add</button>
+</form>
+
+<table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>#Grams</th>
+                </tr>
+              </thead>
+              <tbody>
+{{range .}}
+                <tr>
+                  <td>{{.Location}}</td>
+                  <td>{{.GramsLen}}</td>
+                </tr>
+{{ end }}
+              </tbody>
+            </table>
