@@ -47,11 +47,7 @@
     </div>
 
     <div class="container">
-			{{.}}
-			{{if .Score}}
-	    {{template "search.template" .}}
-			{{end}}
-			{{if .GramsLen}}
+			{{define content}}
 	    {{template "index.template" .}}
 			{{end}}
     </div>
