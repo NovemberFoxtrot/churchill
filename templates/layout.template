@@ -47,7 +47,13 @@
     </div>
 
     <div class="container">
+			{{.}}
+			{{if .Score}}
+	    {{template "search.template" .}}
+			{{end}}
+			{{if .GramsLen}}
 	    {{template "index.template" .}}
+			{{end}}
     </div>
 
     <script src="/public/jquery-2.0.3.min.js"></script>

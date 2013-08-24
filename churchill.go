@@ -54,6 +54,8 @@ type stv struct {
 }
 
 func SearchHandler(rw http.ResponseWriter, r *http.Request) {
+	fmt.Println("We are in!")
+
 	err := r.ParseForm()
 	winston.CheckError(err)
 
