@@ -1,3 +1,8 @@
+<form class="form-inline" action="/search" method="post">
+  <input name="query" type="text" class="input-small" placeholder="Query">
+  <button type="submit" class="btn">Search</button>
+</form>
+
 <form class="form-inline" action="/add" method="post">
   <input name="website" type="text" class="input-small" placeholder="Website">
   <button type="submit" class="btn">Add</button>

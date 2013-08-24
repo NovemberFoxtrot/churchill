@@ -8,24 +8,39 @@ import (
 	"winston"
 )
 
+type Index struct {
+	Data map[string][]*winston.Winston
+}
+
+func (i *Index) update(w *winston.Winston) {
+	for _, gram := range w.Grams {
+		if i.Data[gram] == nil {
+			i.Data[gram] = make([]*winston.Winston, 0)
+		}
+
+		index.Data[gram] = append(index.Data[gram], w)
+	}
+}
+
 func add(website string) {
 	var w winston.Winston
 	w.Location = website
 	w.FetchUrl(website)
 	w.CalcGrams()
-	fmt.Println(len(w.Text), len(w.Grams), len(w.Freq))
 	winstons = append(winstons, w)
+
+	index.update(&w)
 }
 
 func AddHandler(rw http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.URL.Path)
-
 	err := r.ParseForm()
 	winston.CheckError(err)
 
 	fmt.Println(r.Form)
 
 	go add(r.Form["website"][0])
+
+	http.Redirect(rw, r, "/", http.StatusFound)
 }
 
 type tv struct {
@@ -33,11 +48,38 @@ type tv struct {
 	GramsLen int
 }
 
+type stv struct {
+	Location string
+	Score    int
+}
+
+func SearchHandler(rw http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	winston.CheckError(err)
+
+	t, err := template.ParseFiles("templates/layout.template", "templates/search.template")
+	winston.CheckError(err)
+
+	stvs := make([]stv, 0)
+
+	for k, v := range index.Data {
+		if k == r.Form["query"][0] {
+			for _, w := range v {
+				stvs = append(stvs, stv{w.Location, 1})
+			}
+		}
+	}
+
+	t.Execute(rw, stvs)
+}
+
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("templates/layout.template", "templates/index.template")
 	winston.CheckError(err)
 
 	tvs := make([]tv, 0)
+
+	tvs = append(tvs, tv{"Index", len(index.Data)})
 
 	for i := 0; i < len(winstons); i++ {
 		tvs = append(tvs, tv{winstons[i].Location, len(winstons[i].Grams)})
@@ -47,9 +89,11 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 var winstons []winston.Winston
+var index Index
 
 func init() {
 	winstons = make([]winston.Winston, 0)
+	index.Data = make(map[string][]*winston.Winston)
 }
 
 func main() {
@@ -59,6 +103,7 @@ func main() {
 
 	http.HandleFunc("/", IndexHandler)
 	http.HandleFunc("/add", AddHandler)
+	http.HandleFunc("/search", SearchHandler)
 	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir(wd+`/public`))))
 
 	err = http.ListenAndServe(":9090", nil)
