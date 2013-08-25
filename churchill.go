@@ -54,33 +54,29 @@ type stv struct {
 }
 
 func SearchHandler(rw http.ResponseWriter, r *http.Request) {
-	fmt.Println("We are in!")
-
-	err := r.ParseForm()
-	winston.CheckError(err)
-
-	t, err := template.ParseFiles("templates/layout.template", "templates/search.template")
+	t, err := template.ParseFiles("templates/layout.html", "templates/search.html")
 	winston.CheckError(err)
 
 	stvs := make([]stv, 0)
 
 	for k, v := range index.Data {
-		if k == r.Form["query"][0] {
+		if k == r.FormValue("query") {
 			for _, w := range v {
 				stvs = append(stvs, stv{w.Location, 1})
 			}
 		}
 	}
 
+	fmt.Println(index.Data, stvs)
+
 	t.Execute(rw, stvs)
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("templates/layout.template", "templates/index.template")
+	t, err := template.ParseFiles("templates/layout.html", "templates/index.html")
 	winston.CheckError(err)
 
 	tvs := make([]tv, 0)
-
 	tvs = append(tvs, tv{"Index", len(index.Data)})
 
 	for i := 0; i < len(winstons); i++ {

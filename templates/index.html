@@ -1,4 +1,5 @@
-<form class="form-inline" action="/search" method="post">
+{{define "content"}}
+<form class="form-inline" action="/search" method="get">
   <input name="query" type="text" class="input-small" placeholder="Query">
   <button type="submit" class="btn">Search</button>
 </form>
@@ -24,3 +25,4 @@
 {{ end }}
               </tbody>
             </table>
+{{end}}

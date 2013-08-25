@@ -1,0 +1,18 @@
+{{define "content"}}
+<table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody>
+{{range .}}
+                <tr>
+                  <td>{{.Location}}</td>
+                  <td>{{.Score}}</td>
+                </tr>
+{{ end }}
+              </tbody>
+            </table>
+{{end}}
