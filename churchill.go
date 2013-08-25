@@ -67,8 +67,6 @@ func SearchHandler(rw http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fmt.Println(index.Data, stvs)
-
 	t.Execute(rw, stvs)
 }
 
