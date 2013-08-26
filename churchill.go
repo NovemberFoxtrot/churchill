@@ -87,12 +87,10 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 var winstons []winston.Winston
 var index Index
 
-func init() {
+func main() {
 	winstons = make([]winston.Winston, 0)
 	index.Data = make(map[string][]*winston.Winston)
-}
 
-func main() {
 	wd, err := os.Getwd()
 
 	winston.CheckError(err)
