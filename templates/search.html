@@ -9,7 +9,7 @@
               <tbody>
 {{range .}}
                 <tr>
-                  <td><a href="{{.Location}}">{{.Location}}</a></td>
+                  <td><a href="{{.Result.Location}}">{{.Result.Sentence}}</a></td>
                   <td>{{.Score}}</td>
                 </tr>
 {{ end }}

@@ -14,7 +14,7 @@ type tv struct {
 }
 
 type stv struct {
-	Location string
+	Result winston.QueryResult
 	Score    int
 }
 
