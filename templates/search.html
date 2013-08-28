@@ -1,4 +1,4 @@
-{{define "content"}}
+// define "content" //
 <table class="table table-striped">
               <thead>
                 <tr>
@@ -7,12 +7,12 @@
                 </tr>
               </thead>
               <tbody>
-{{range .}}
+// range . //
                 <tr>
-                  <td><a href="{{.Result.Location}}">{{.Result.Sentence}}</a></td>
-                  <td>{{.Score}}</td>
+                  <td><a href="// .Result.Location //">// .Result.Sentence //</a></td>
+                  <td>// .Score //</td>
                 </tr>
-{{ end }}
+// end //
               </tbody>
             </table>
-{{end}}
+// end //

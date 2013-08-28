@@ -1,4 +1,4 @@
-{{define "content"}}
+// define "content" //
 <form class="form-inline" action="/search" method="get">
   <input name="query" type="text" class="input-small" placeholder="Query">
   <button type="submit" class="btn">Search</button>
@@ -17,12 +17,12 @@
                 </tr>
               </thead>
               <tbody>
-{{range .}}
+// range . //
                 <tr>
-                  <td>{{.Location}}</td>
-                  <td>{{.GramsLen}}</td>
+                  <td>// .Location //</td>
+                  <td>// .GramsLen //</td>
                 </tr>
-{{ end }}
+// end //
               </tbody>
             </table>
-{{end}}
+// end //

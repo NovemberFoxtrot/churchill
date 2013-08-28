@@ -4,8 +4,8 @@ import (
 	"html/template"
 	"net/http"
 	"os"
-	"sir"
 	"roosevelt"
+	"sir"
 )
 
 type tv struct {
@@ -15,7 +15,7 @@ type tv struct {
 
 type stv struct {
 	Result roosevelt.QueryResult
-	Score    int
+	Score  int
 }
 
 func AddHandler(w http.ResponseWriter, r *http.Request) {
@@ -23,31 +23,37 @@ func AddHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func SearchHandler(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("templates/layout.html", "templates/search.html")
+func render(w http.ResponseWriter, data interface{}, filenames ...string) {
+	t := template.New("layout")
+  t.Delims("//", "//")
+
+	t, err := t.ParseFiles(filenames...)
 	sir.CheckError(err)
 
+	t.Execute(w, data)
+}
+
+func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	stvs := make([]stv, 0)
 
 	for index, location := range roosevelt.Query(r.FormValue("query")) {
 		stvs = append(stvs, stv{location, index})
 	}
 
-	t.Execute(w, stvs)
+	render(w, stvs, "templates/layout.html", "templates/search.html")
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("templates/layout.html", "templates/index.html")
-	sir.CheckError(err)
-
 	tvs := make([]tv, 0)
 	tvs = append(tvs, tv{"Index", roosevelt.IndexDataLen()})
+
 	/*
 		for i := 0; i < len(winston.Documents); i++ {
 			tvs = append(tvs, tv{winstons[i].Location, len(winstons[i].Grams)})
 		}
 	*/
-	t.Execute(w, tvs)
+
+	render(w, tvs, "templates/layout.html", "templates/index.html")
 }
 
 func main() {
