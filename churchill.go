@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"html/template"
 	"net/http"
 	"os"
@@ -55,13 +57,35 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	render(w, tvs, "templates/layout.html", "templates/index.html")
 }
 
+type Response map[string]interface{}
+
+func (r Response) String() (s string) {
+	b, err := json.Marshal(r)
+
+	if err != nil {
+		s = ""
+		return
+	}
+
+	s = string(b)
+	return
+}
+
+func TestHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, Response{"success": true, "message": "Hello!"})
+	return
+}
+
 func main() {
 	wd, err := os.Getwd()
 	sir.CheckError(err)
 
 	http.HandleFunc("/", IndexHandler)
 	http.HandleFunc("/add", AddHandler)
+	http.HandleFunc("/test", TestHandler)
 	http.HandleFunc("/search", SearchHandler)
+
 	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir(wd+`/public`))))
 
 	err = http.ListenAndServe(":9090", nil)
