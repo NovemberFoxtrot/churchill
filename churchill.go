@@ -6,6 +6,7 @@ import (
 	"os"
 	"roosevelt"
 	"sir"
+	"winston"
 )
 
 type tv struct {
@@ -25,7 +26,7 @@ func AddHandler(w http.ResponseWriter, r *http.Request) {
 
 func render(w http.ResponseWriter, data interface{}, filenames ...string) {
 	t := template.New("layout")
-  t.Delims("//", "//")
+	t.Delims("//", "//")
 
 	t, err := t.ParseFiles(filenames...)
 	sir.CheckError(err)
@@ -47,11 +48,9 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	tvs := make([]tv, 0)
 	tvs = append(tvs, tv{"Index", roosevelt.IndexDataLen()})
 
-	/*
-		for i := 0; i < len(winston.Documents); i++ {
-			tvs = append(tvs, tv{winstons[i].Location, len(winstons[i].Grams)})
-		}
-	*/
+	for i := 0; i < len(winston.TheDocuments); i++ {
+		tvs = append(tvs, tv{winston.TheDocuments[i].Location, len(winston.TheDocuments[i].Grams)})
+	}
 
 	render(w, tvs, "templates/layout.html", "templates/index.html")
 }
