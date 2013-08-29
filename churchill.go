@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"net/http"
+	"nimitz"
 	"os"
 	"roosevelt"
 	"sir"
@@ -26,16 +26,6 @@ func AddHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func parseTemplate(filenames ...string) *template.Template {
-	t := template.New("layout")
-	t.Delims("//", "//")
-
-	t, err := t.ParseFiles(filenames...)
-	sir.CheckError(err)
-
-	return t
-}
-
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	stvs := make([]stv, 0)
 
@@ -43,7 +33,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 		stvs = append(stvs, stv{location, index})
 	}
 
-	templatePool["search"].Execute(w, stvs)
+	pool.Pools["search"].Execute(w, stvs)
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +44,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		tvs = append(tvs, tv{winston.TheDocuments[i].Location, len(winston.TheDocuments[i].Grams)})
 	}
 
-	templatePool["index"].Execute(w, tvs)
+	pool.Pools["index"].Execute(w, tvs)
 }
 
 type Response map[string]interface{}
@@ -77,20 +67,14 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-type templateCache map[string]*template.Template
+var pool nimitz.Pool
 
-var templatePool templateCache
-
-func initTemplatePool() {
-	templatePool = make(templateCache)
-
-	templatePool["index"] = parseTemplate("templates/layout.html", "templates/index.html")
-	templatePool["search"] = parseTemplate("templates/layout.html", "templates/search.html")
+func init() {
+	pool.Fill("index", "templates/layout.html", "templates/index.html")
+	pool.Fill("search", "templates/layout.html", "templates/search.html")
 }
 
 func main() {
-	initTemplatePool()
-
 	wd, err := os.Getwd()
 	sir.CheckError(err)
 
