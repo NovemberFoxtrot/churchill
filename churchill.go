@@ -26,14 +26,14 @@ func AddHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func render(w http.ResponseWriter, data interface{}, filenames ...string) {
+func parseTemplate(filenames ...string) *template.Template {
 	t := template.New("layout")
 	t.Delims("//", "//")
 
 	t, err := t.ParseFiles(filenames...)
 	sir.CheckError(err)
 
-	t.Execute(w, data)
+	return t
 }
 
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +43,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 		stvs = append(stvs, stv{location, index})
 	}
 
-	render(w, stvs, "templates/layout.html", "templates/search.html")
+	templatePool["search"].Execute(w, stvs)
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +54,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		tvs = append(tvs, tv{winston.TheDocuments[i].Location, len(winston.TheDocuments[i].Grams)})
 	}
 
-	render(w, tvs, "templates/layout.html", "templates/index.html")
+	templatePool["index"].Execute(w, tvs)
 }
 
 type Response map[string]interface{}
@@ -77,7 +77,20 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+type templateCache map[string]*template.Template
+
+var templatePool templateCache
+
+func initTemplatePool() {
+	templatePool = make(templateCache)
+
+	templatePool["index"] = parseTemplate("templates/layout.html", "templates/index.html")
+	templatePool["search"] = parseTemplate("templates/layout.html", "templates/search.html")
+}
+
 func main() {
+	initTemplatePool()
+
 	wd, err := os.Getwd()
 	sir.CheckError(err)
 
