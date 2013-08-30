@@ -49,16 +49,12 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 type Response map[string]interface{}
 
-func (r Response) String() (s string) {
+func (r Response) String() string {
 	b, err := json.Marshal(r)
 
-	if err != nil {
-		s = ""
-		return
-	}
+	sir.CheckError(err)
 
-	s = string(b)
-	return
+	return string(b)
 }
 
 func TestHandler(w http.ResponseWriter, r *http.Request) {
