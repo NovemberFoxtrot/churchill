@@ -33,7 +33,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 		stvs = append(stvs, stv{location, index})
 	}
 
-	pool.Pools["search"].Execute(w, stvs)
+	nimitz.ThePool.Pools["search"].Execute(w, stvs)
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +44,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		tvs = append(tvs, tv{winston.TheDocuments[i].Location, len(winston.TheDocuments[i].Grams)})
 	}
 
-	pool.Pools["index"].Execute(w, tvs)
+	nimitz.ThePool.Pools["index"].Execute(w, tvs)
 }
 
 type Response map[string]interface{}
@@ -67,11 +67,9 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-var pool nimitz.Pool
-
 func init() {
-	pool.Fill("index", "templates/layout.html", "templates/index.html")
-	pool.Fill("search", "templates/layout.html", "templates/search.html")
+	nimitz.ThePool.Fill("index", "templates/layout.html", "templates/index.html")
+	nimitz.ThePool.Fill("search", "templates/layout.html", "templates/search.html")
 }
 
 func main() {
