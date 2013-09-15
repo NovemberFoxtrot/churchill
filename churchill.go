@@ -79,6 +79,6 @@ func main() {
 
 	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir(wd+`/public`))))
 
-	err = http.ListenAndServe(":9090", nil)
+	err = http.ListenAndServe(":8080", nil)
 	sir.CheckError(err)
 }
